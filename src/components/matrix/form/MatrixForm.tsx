@@ -15,7 +15,7 @@ export const columnsDefault = 3;
 export const rowsDefault = 3;
 export const [startPositionColumnDefault, startPositionRowDefault] = [0, 0];
 export const [endPositionColumnDefault, endPositionRowDefault] = [2, 2];
-export const blockingObjectsDefault = 2;
+export const blockingObjectsDefault = 3;
 
 const MatrixForm: FC<MatrixFormProps> = ({
   setColumnsNumber,

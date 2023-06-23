@@ -8,7 +8,7 @@ import {
   startPositionColumnDefault,
   startPositionRowDefault,
 } from "../form/MatrixForm";
-import { isTheSamePosition } from "../../../utils";
+import { isAlreadyAtPosition, isTheSamePosition } from "../../../utils";
 
 const matrixDefault = [
   [0, 1, 2],
@@ -58,12 +58,13 @@ export const useMatrix = () => {
 
   useEffect(() => {
     let newBoMatrix: number[][] = [];
-    for (let i = 0; i <= blockingObjectsNumber; i++) {
+    for (let i = 0; i < blockingObjectsNumber; i++) {
       let boColumn = Math.floor(Math.random() * columnsNumber);
       let boRow = Math.floor(Math.random() * rowsNumber);
 
       // while bo positions don't collide with start or end position
       while (
+        isAlreadyAtPosition([boColumn, boRow], newBoMatrix) ||
         isTheSamePosition([boColumn, boRow], startPosition) ||
         isTheSamePosition([boColumn, boRow], endPosition)
       ) {
@@ -72,7 +73,7 @@ export const useMatrix = () => {
       }
       newBoMatrix = [...newBoMatrix, [boColumn, boRow]];
     }
-    console.log(newBoMatrix);
+
     setBoMatrix(newBoMatrix);
   }, [blockingObjectsNumber, columnsNumber, rowsNumber]);
 

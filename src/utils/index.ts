@@ -20,4 +20,13 @@ export const getCellClassNameAndText = (
 };
 
 export const isTheSamePosition = (a: number[], b: number[]) =>
-  a.every((element, index) => element === b[index]);
+  a?.length && b?.length && a.every((element, index) => element === b[index]);
+
+export const isAlreadyAtPosition = (position: number[], matrix: number[][]) => {
+  for (let i = 0; i <= matrix.length; i++) {
+    if (isTheSamePosition(matrix[i], position)) {
+      return true;
+    }
+  }
+  return false;
+};
