@@ -66,10 +66,19 @@ const Matrix = () => {
                     }
                   }
 
+                  let isAtBoPath = false;
+                  for (let i = 0; i <= moMatrix.length; i++) {
+                    if (isCellAtPosition(moMatrix[i], rowIndex, columnIndex)) {
+                      isAtBoPath = true;
+                    }
+                  }
+
                   const cellClassName = isAtMoPosition
                     ? "mo"
                     : isAtBoPosition
                     ? "bo"
+                    : isAtBoPath
+                    ? "mo-path"
                     : "";
 
                   return (

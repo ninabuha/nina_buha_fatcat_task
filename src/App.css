@@ -43,8 +43,18 @@ th {
   transform: translate(-50%, -50%);
 }
 
-.bo {
+.mo-path {
   border-radius: 50%;
+  width: 50%;
+  height: 50%;
+  position: absolute;
+  background-color: #c4f1df;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.bo {
   width: 50%;
   height: 50%;
   position: absolute;

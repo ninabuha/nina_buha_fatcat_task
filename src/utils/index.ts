@@ -30,3 +30,47 @@ export const isAlreadyAtPosition = (position: number[], matrix: number[][]) => {
   }
   return false;
 };
+
+export const hasPathDfs = (
+  matrix: number[][],
+  boMatrix: number[][],
+  startColumn: number,
+  startRow: number,
+  endColumn: number,
+  endRow: number
+) => {
+  var rows = matrix.length;
+  var columns = matrix[0]?.length;
+  var visited = [];
+  for (let i = 0; i < rows; i++) {
+    visited[i] = new Array(columns).fill(false);
+  }
+  dfs(matrix, boMatrix, startColumn, startRow, visited);
+  return { visited, isEnd: visited[endColumn][endRow] };
+};
+
+const dfs = (
+  matrix: number[][],
+  boMatrix: number[][],
+  i: number,
+  j: number,
+  visited: boolean[][]
+) => {
+  const rows = matrix.length;
+  const columns = matrix[0].length;
+  if (
+    i < 0 ||
+    i >= rows ||
+    j < 0 ||
+    j >= columns ||
+    matrix[i][j] === 1 ||
+    visited[i][j]
+  ) {
+    return;
+  }
+  visited[i][j] = true;
+  dfs(matrix, boMatrix, i - 1, j, visited); // Move left
+  dfs(matrix, boMatrix, i + 1, j, visited); // Move Right
+  dfs(matrix, boMatrix, i, j - 1, visited); // Move top
+  dfs(matrix, boMatrix, i, j + 1, visited); // Move bottom
+};

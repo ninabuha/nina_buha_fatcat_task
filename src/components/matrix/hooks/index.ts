@@ -8,7 +8,11 @@ import {
   startPositionColumnDefault,
   startPositionRowDefault,
 } from "../form/MatrixForm";
-import { isAlreadyAtPosition, isTheSamePosition } from "../../../utils";
+import {
+  hasPathDfs,
+  isAlreadyAtPosition,
+  isTheSamePosition,
+} from "../../../utils";
 
 const matrixDefault = [
   [0, 1, 2],
@@ -62,8 +66,9 @@ export const useMatrix = () => {
       let boColumn = Math.floor(Math.random() * columnsNumber);
       let boRow = Math.floor(Math.random() * rowsNumber);
 
-      // while bo positions don't collide with start or end position
+      // while bo positions don't collide with start or end position or mo previous path
       while (
+        isAlreadyAtPosition([boColumn, boRow], moMatrix) ||
         isAlreadyAtPosition([boColumn, boRow], newBoMatrix) ||
         isTheSamePosition([boColumn, boRow], startPosition) ||
         isTheSamePosition([boColumn, boRow], endPosition)
@@ -77,10 +82,32 @@ export const useMatrix = () => {
     setBoMatrix(newBoMatrix);
   }, [blockingObjectsNumber, columnsNumber, rowsNumber]);
 
+  useEffect(() => {
+    const { visited, isEnd } = hasPathDfs(
+      matrix,
+      boMatrix,
+      startPosition[0],
+      startPosition[1],
+      endPosition[0],
+      endPosition[1]
+    );
+
+    let newMoMatrix: number[][] = [];
+    for (let i = 0; i < visited.length; i++) {
+      for (let j = 0; j < visited[i].length; j++) {
+        newMoMatrix = [...newMoMatrix, [i, j]];
+      }
+    }
+
+    if (isEnd) {
+      console.log("Exit is found!");
+    }
+
+    setMoMatrix(newMoMatrix);
+  }, [columnsNumber, rowsNumber, matrix, boMatrix]);
+
   return {
-    columnsNumber,
     setColumnsNumber,
-    rowsNumber,
     setRowsNumber,
     matrix,
     setMatrix,
