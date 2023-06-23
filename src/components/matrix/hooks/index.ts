@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   blockingObjectsDefault,
   columnsDefault,
@@ -9,12 +9,12 @@ import {
   startPositionRowDefault,
 } from "../form/MatrixForm";
 import {
-  hasPathDfs,
+  useHasPathDfs,
   isAlreadyAtPosition,
   isTheSamePosition,
 } from "../../../utils";
 
-const matrixDefault = [
+export const matrixDefault = [
   [0, 1, 2],
   [3, 4, 5],
   [6, 7, 8],
@@ -37,8 +37,7 @@ export const useMatrix = () => {
   ]);
 
   // mo
-  const [moPosition, setMoPosition] = useState<number[]>(startPosition);
-  const [moMatrix, setMoMatrix] = useState<number[][]>([]);
+  const [moMatrix, setMoMatrix] = useState<number[][]>([startPosition]);
 
   // bo
   const [blockingObjectsNumber, setBlockimngObjectsNumber] = useState(
@@ -46,7 +45,21 @@ export const useMatrix = () => {
   );
   const [boMatrix, setBoMatrix] = useState<number[][]>([]);
 
-  useEffect(() => {
+  const [startAgainVisible, setStartAgainVisible] = useState(false);
+  const hasPathDfs = useHasPathDfs(
+    matrix,
+    boMatrix,
+    startPosition[0],
+    startPosition[1],
+    endPosition[0],
+    endPosition[1],
+    setMoMatrix
+  );
+
+  const resetMatrix = useCallback(() => {
+    // setMoMatrix([]);
+
+    // new matrix
     const newMatrix = [];
     let index = 0;
     for (let i = 0; i < rowsNumber; i++) {
@@ -56,11 +69,11 @@ export const useMatrix = () => {
         index++;
       }
     }
-
     setMatrix(newMatrix);
-  }, [columnsNumber, rowsNumber]);
+  }, [columnsNumber, rowsNumber, startPosition]);
 
-  useEffect(() => {
+  const resetBoMatrix = useCallback(() => {
+    // new bo matrix
     let newBoMatrix: number[][] = [];
     for (let i = 0; i < blockingObjectsNumber; i++) {
       let boColumn = Math.floor(Math.random() * columnsNumber);
@@ -78,50 +91,57 @@ export const useMatrix = () => {
       }
       newBoMatrix = [...newBoMatrix, [boColumn, boRow]];
     }
-
     setBoMatrix(newBoMatrix);
-  }, [blockingObjectsNumber, columnsNumber, rowsNumber]);
+  }, [
+    startPosition,
+    blockingObjectsNumber,
+    columnsNumber,
+    rowsNumber,
+    endPosition,
+    moMatrix,
+  ]);
 
-  useEffect(() => {
-    const { visited, isEnd } = hasPathDfs(
-      matrix,
-      boMatrix,
-      startPosition[0],
-      startPosition[1],
-      endPosition[0],
-      endPosition[1]
-    );
-
-    let newMoMatrix: number[][] = [];
-    for (let i = 0; i < visited.length; i++) {
-      for (let j = 0; j < visited[i].length; j++) {
-        newMoMatrix = [...newMoMatrix, [i, j]];
-      }
-    }
+  const findPath = useCallback(() => {
+    const isEnd = hasPathDfs();
 
     if (isEnd) {
       console.log("Exit is found!");
+      setStartAgainVisible(true);
+      return;
     }
+  }, [matrix, boMatrix, startPosition, endPosition]);
 
-    setMoMatrix(newMoMatrix);
-  }, [columnsNumber, rowsNumber, matrix, boMatrix]);
+  const reset = () => {
+    resetMatrix();
+    // setBoMatrix([]);
+    setMoMatrix([]);
+    setStartAgainVisible(false);
+  };
+
+  useEffect(() => {
+    resetMatrix();
+  }, [
+    columnsNumber,
+    rowsNumber,
+    blockingObjectsNumber,
+    startPosition,
+    endPosition,
+  ]);
 
   return {
+    startPosition,
+    endPosition,
     setColumnsNumber,
     setRowsNumber,
-    matrix,
-    setMatrix,
-    startPosition,
     setStartPosition,
-    endPosition,
     setEndPosition,
-    moPosition,
-    setMoPosition,
+    matrix,
     setBlockimngObjectsNumber,
-    blockingObjectsNumber,
     boMatrix,
-    setBoMatrix,
     moMatrix,
-    setMoMatrix,
+    findPath,
+    reset,
+    resetBoMatrix,
+    startAgainVisible,
   };
 };

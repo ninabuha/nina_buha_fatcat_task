@@ -8,15 +8,16 @@ const Matrix = () => {
     endPosition,
     setColumnsNumber,
     setRowsNumber,
-    moPosition,
     setStartPosition,
     setEndPosition,
     matrix,
     setBlockimngObjectsNumber,
     boMatrix,
-    setBoMatrix,
     moMatrix,
-    setMoMatrix,
+    findPath,
+    reset,
+    resetBoMatrix,
+    startAgainVisible,
   } = useMatrix();
 
   return (
@@ -29,6 +30,10 @@ const Matrix = () => {
         setStartPosition={setStartPosition}
         setEndPosition={setEndPosition}
         setBlockimngObjectsNumber={setBlockimngObjectsNumber}
+        findPath={findPath}
+        reset={reset}
+        resetBoMatrix={resetBoMatrix}
+        startAgain={startAgainVisible}
       />
 
       <div className="matrix">
@@ -54,7 +59,7 @@ const Matrix = () => {
                   );
 
                   const isAtMoPosition = isCellAtPosition(
-                    moPosition,
+                    moMatrix[moMatrix.length - 1],
                     rowIndex,
                     columnIndex
                   );
@@ -66,10 +71,10 @@ const Matrix = () => {
                     }
                   }
 
-                  let isAtBoPath = false;
+                  let isAtMoPath = false;
                   for (let i = 0; i <= moMatrix.length; i++) {
                     if (isCellAtPosition(moMatrix[i], rowIndex, columnIndex)) {
-                      isAtBoPath = true;
+                      isAtMoPath = true;
                     }
                   }
 
@@ -77,7 +82,7 @@ const Matrix = () => {
                     ? "mo"
                     : isAtBoPosition
                     ? "bo"
-                    : isAtBoPath
+                    : isAtMoPath
                     ? "mo-path"
                     : "";
 
@@ -93,6 +98,8 @@ const Matrix = () => {
           </tbody>
         </table>
       </div>
+
+      {startAgainVisible && <button onClick={reset}>Start Again?</button>}
     </div>
   );
 };

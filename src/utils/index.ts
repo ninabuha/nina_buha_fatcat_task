@@ -1,3 +1,5 @@
+import { useCallback, useState } from "react";
+
 export const isCellAtPosition = (
   position: number[],
   rowIndex: number,
@@ -31,46 +33,74 @@ export const isAlreadyAtPosition = (position: number[], matrix: number[][]) => {
   return false;
 };
 
-export const hasPathDfs = (
+export const useHasPathDfs = (
   matrix: number[][],
   boMatrix: number[][],
   startColumn: number,
   startRow: number,
   endColumn: number,
-  endRow: number
+  endRow: number,
+  setMoMatrix: React.Dispatch<React.SetStateAction<number[][]>>
 ) => {
-  var rows = matrix.length;
-  var columns = matrix[0]?.length;
-  var visited = [];
-  for (let i = 0; i < rows; i++) {
-    visited[i] = new Array(columns).fill(false);
-  }
-  dfs(matrix, boMatrix, startColumn, startRow, visited);
-  return { visited, isEnd: visited[endColumn][endRow] };
-};
+  const visited: boolean[][] = [];
 
-const dfs = (
-  matrix: number[][],
-  boMatrix: number[][],
-  i: number,
-  j: number,
-  visited: boolean[][]
-) => {
-  const rows = matrix.length;
-  const columns = matrix[0].length;
-  if (
-    i < 0 ||
-    i >= rows ||
-    j < 0 ||
-    j >= columns ||
-    matrix[i][j] === 1 ||
-    visited[i][j]
-  ) {
-    return;
-  }
-  visited[i][j] = true;
-  dfs(matrix, boMatrix, i - 1, j, visited); // Move left
-  dfs(matrix, boMatrix, i + 1, j, visited); // Move Right
-  dfs(matrix, boMatrix, i, j - 1, visited); // Move top
-  dfs(matrix, boMatrix, i, j + 1, visited); // Move bottom
+  const hasPathDfs = useCallback(() => {
+    const rows = matrix.length;
+    const columns = matrix[0]?.length;
+    for (let i = 0; i < rows; i++) {
+      visited[i] = new Array(columns).fill(false);
+    }
+
+    dfs(matrix, boMatrix, startColumn, startRow, setMoMatrix);
+
+    function dfs(
+      matrix: number[][],
+      boMatrix: number[][],
+      i: number,
+      j: number,
+      setMoMatrix: React.Dispatch<React.SetStateAction<number[][]>>
+    ) {
+      const rows = matrix.length;
+      const columns = matrix[0].length;
+
+      if (
+        i < 0 ||
+        i >= rows ||
+        j < 0 ||
+        j >= columns ||
+        matrix[i][j] === 1 ||
+        visited[i][j] ||
+        // or if there is a bo object
+        isAlreadyAtPosition([i, j], boMatrix)
+      ) {
+        return false;
+      }
+
+      const callDfs = (i: number, j: number) => {
+        return dfs(matrix, boMatrix, i, j, setMoMatrix);
+      };
+
+      visited[i][j] = true;
+      setMoMatrix((prevState: number[][]) => [...prevState, [i, j]]);
+
+      if (visited[endColumn][endRow]) {
+        return true;
+      }
+
+      if (
+        callDfs(i - 1, j) ||
+        callDfs(i + 1, j) ||
+        callDfs(i, j - 1) ||
+        callDfs(i, j + 1)
+      ) {
+        return true;
+      }
+
+      console.log("Can not move");
+      return false;
+    }
+    return visited[endColumn][endRow];
+  }, [boMatrix, endColumn, endRow, matrix, setMoMatrix, startColumn, startRow]);
+
+  return hasPathDfs;
 };

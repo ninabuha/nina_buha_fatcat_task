@@ -1,24 +1,27 @@
-import { ChangeEvent, FC } from "react";
+import { FC, forwardRef, Ref } from "react";
 
 interface FieldProps {
   label: string;
   field: string;
   defaultValue: number;
-  onChange: (newValue: ChangeEvent<HTMLInputElement>) => void;
+  ref: Ref<HTMLInputElement> | undefined;
 }
 
-const Field: FC<FieldProps> = ({ label, field, defaultValue, onChange }) => {
-  return (
-    <div>
-      <label htmlFor={field}>{label}</label>
-      <input
-        type="number"
-        id={field}
-        defaultValue={defaultValue}
-        onChange={(e) => onChange(e)}
-      />
-    </div>
-  );
-};
+const Field: FC<FieldProps> = forwardRef(
+  ({ label, field, defaultValue }, ref) => {
+    return (
+      <div>
+        <label htmlFor={field}>{label}</label>
+        <input
+          type="number"
+          id={field}
+          defaultValue={defaultValue}
+          ref={ref}
+          min={0}
+        />
+      </div>
+    );
+  }
+);
 
 export default Field;
