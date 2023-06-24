@@ -54,7 +54,6 @@ const MatrixForm: FC<MatrixFormProps> = ({
     e.preventDefault();
 
     reset();
-    resetBoMatrix();
 
     // if there is not position to move to
     if (blockingObjectsNumber >= matrixSize * matrixSizeDefault) {
@@ -81,6 +80,8 @@ const MatrixForm: FC<MatrixFormProps> = ({
       endPositionRow ?? endPositionRowDefault,
     ]);
     setBlockimngObjectsNumber(blockingObjectsNumber ?? blockingObjectsDefault);
+
+    resetBoMatrix();
 
     findPath();
   };

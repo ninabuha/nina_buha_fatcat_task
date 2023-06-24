@@ -27,7 +27,6 @@ const Matrix = () => {
     resetBoMatrix,
     startAgainVisible,
   } = useMatrix();
-
   const [resultsTable, setResultsTable] = useState<number[][]>([]);
 
   const calculateTest = (boNumber: number) => {

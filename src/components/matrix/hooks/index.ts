@@ -88,7 +88,7 @@ export const useMatrix = () => {
       newBoMatrix = [...newBoMatrix, [boColumn, boRow]];
     }
     setBoMatrix(newBoMatrix);
-  }, [startPosition, blockingObjectsNumber, matrixSize, endPosition, moMatrix]);
+  }, [blockingObjectsNumber, matrixSize, moMatrix]);
 
   const findPath = useCallback(() => {
     const startTime = performance.now();
@@ -118,6 +118,10 @@ export const useMatrix = () => {
 
   useEffect(() => {
     resetMatrix();
+
+    return () => {
+      resetBoMatrix();
+    };
   }, [matrixSize, blockingObjectsNumber, startPosition, endPosition]);
 
   return {
