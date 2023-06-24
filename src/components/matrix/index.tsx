@@ -6,8 +6,7 @@ const Matrix = () => {
   const {
     startPosition,
     endPosition,
-    setColumnsNumber,
-    setRowsNumber,
+    setMatrixSize,
     setStartPosition,
     setEndPosition,
     matrix,
@@ -23,10 +22,7 @@ const Matrix = () => {
   return (
     <div>
       <MatrixForm
-        setColumnsNumber={setColumnsNumber}
-        setRowsNumber={setRowsNumber}
-        startPosition={startPosition}
-        endPosition={endPosition}
+        setMatrixSize={setMatrixSize}
         setStartPosition={setStartPosition}
         setEndPosition={setEndPosition}
         setBlockimngObjectsNumber={setBlockimngObjectsNumber}
@@ -34,6 +30,7 @@ const Matrix = () => {
         reset={reset}
         resetBoMatrix={resetBoMatrix}
         startAgain={startAgainVisible}
+        moMatrix={moMatrix}
       />
 
       <div className="matrix">

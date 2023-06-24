@@ -1,28 +1,24 @@
-import { FC, FormEvent, useRef } from "react";
+import { FC, FormEvent, useRef, useState } from "react";
 import Field from "./Field";
 
 interface MatrixFormProps {
-  setColumnsNumber: (number: number) => void;
-  setRowsNumber: (number: number) => void;
+  setMatrixSize: (number: number) => void;
   setStartPosition: (number: number[]) => void;
   setEndPosition: (number: number[]) => void;
-  startPosition: number[];
-  endPosition: number[];
   setBlockimngObjectsNumber: (number: number) => void;
   findPath: () => void;
   reset: () => void;
   resetBoMatrix: () => void;
   startAgain: boolean;
+  moMatrix: number[][];
 }
-export const columnsDefault = 3;
-export const rowsDefault = 3;
+export const matrixSizeDefault = 3;
 export const [startPositionColumnDefault, startPositionRowDefault] = [0, 0];
 export const [endPositionColumnDefault, endPositionRowDefault] = [2, 2];
 export const blockingObjectsDefault = 3;
 
 const MatrixForm: FC<MatrixFormProps> = ({
-  setColumnsNumber,
-  setRowsNumber,
+  setMatrixSize,
   setStartPosition,
   setEndPosition,
   setBlockimngObjectsNumber,
@@ -30,14 +26,29 @@ const MatrixForm: FC<MatrixFormProps> = ({
   reset,
   resetBoMatrix,
   startAgain,
+  moMatrix,
 }) => {
-  const noColumnsRef = useRef<HTMLInputElement>(null);
-  const noRowsRef = useRef<HTMLInputElement>(null);
-  const startColumnRef = useRef<HTMLInputElement>(null);
-  const startRowRef = useRef<HTMLInputElement>(null);
-  const endColumnRef = useRef<HTMLInputElement>(null);
-  const endRowRef = useRef<HTMLInputElement>(null);
-  const noBlockingObjectsRef = useRef<HTMLInputElement>(null);
+  const [formState, setFormState] = useState({
+    matrixSize: matrixSizeDefault,
+    blockingObjectsNumber: blockingObjectsDefault,
+    startPositionColumn: startPositionColumnDefault,
+    startPositionRow: startPositionRowDefault,
+    endPositionColumn: endPositionColumnDefault,
+    endPositionRow: endPositionRowDefault,
+  });
+
+  const {
+    matrixSize,
+    startPositionColumn,
+    startPositionRow,
+    endPositionColumn,
+    endPositionRow,
+    blockingObjectsNumber,
+  } = formState;
+
+  const changeFormState = (field: string, value: number) => {
+    setFormState((prevState) => ({ ...prevState, [field]: value }));
+  };
 
   const onSubmit = (e: FormEvent) => {
     e.preventDefault();
@@ -45,41 +56,31 @@ const MatrixForm: FC<MatrixFormProps> = ({
     reset();
     resetBoMatrix();
 
-    const columnsNumber = noColumnsRef?.current?.value;
-    const rowsNumber = noRowsRef?.current?.value;
-    const startColumnNumber = startColumnRef?.current?.value;
-    const startRowNumber = startRowRef?.current?.value;
-    const endColumnNumber = endColumnRef?.current?.value;
-    const endRowNumber = endRowRef?.current?.value;
-    const noBlockingObjectsNumber = noBlockingObjectsRef?.current?.value;
-
-    if (
-      columnsNumber &&
-      rowsNumber &&
-      startColumnNumber &&
-      startRowNumber &&
-      endColumnNumber &&
-      endRowNumber &&
-      noBlockingObjectsNumber
-    ) {
-      setColumnsNumber(columnsNumber ? +columnsNumber : columnsDefault);
-      setRowsNumber(rowsNumber ? +rowsNumber : rowsDefault);
-      // setting start position
-      setStartPosition([
-        startColumnNumber ? +startColumnNumber : startPositionColumnDefault,
-        startRowNumber ? +startRowNumber : startPositionRowDefault,
-      ]);
-      // setting new end position
-      setEndPosition([
-        endColumnNumber ? +endColumnNumber : endPositionColumnDefault,
-        endRowNumber ? +endRowNumber : endPositionRowDefault,
-      ]);
-      setBlockimngObjectsNumber(
-        noBlockingObjectsNumber
-          ? +noBlockingObjectsNumber
-          : blockingObjectsDefault
+    // if there is not position to move to
+    if (blockingObjectsNumber >= matrixSize * matrixSizeDefault) {
+      changeFormState(
+        "blockingObjectsNumber",
+        matrixSize * matrixSizeDefault - 1
       );
     }
+
+    // reducing mo number by one if there is no space to move to
+    if (moMatrix.length >= matrixSize * matrixSize - blockingObjectsNumber) {
+      changeFormState("blockingObjectsNumber", blockingObjectsNumber - 1);
+    }
+
+    setMatrixSize(matrixSize ?? matrixSizeDefault);
+    // setting start position
+    setStartPosition([
+      startPositionColumn ?? startPositionColumnDefault,
+      startPositionRow ?? startPositionRowDefault,
+    ]);
+    // setting new end position
+    setEndPosition([
+      endPositionColumn ?? endPositionColumnDefault,
+      endPositionRow ?? endPositionRowDefault,
+    ]);
+    setBlockimngObjectsNumber(blockingObjectsNumber ?? blockingObjectsDefault);
 
     findPath();
   };
@@ -87,50 +88,48 @@ const MatrixForm: FC<MatrixFormProps> = ({
   return (
     <form onSubmit={onSubmit}>
       <Field
-        label="No. of Columns"
-        field="columns"
-        defaultValue={columnsDefault}
-        ref={noColumnsRef}
-      />
-      <Field
-        label="No. of Rows"
-        field="rows"
-        defaultValue={rowsDefault}
-        ref={noRowsRef}
+        label="Matrix Size"
+        field="matrix-size"
+        value={matrixSize}
+        onChange={(e) => changeFormState("matrixSize", +e.target.value)}
       />
       <label>Start Position:</label>
       <Field
         label="Column"
         field="start-columns"
-        defaultValue={startPositionColumnDefault}
-        ref={startColumnRef}
+        value={startPositionColumn}
+        onChange={(e) =>
+          changeFormState("startPositionColumn", +e.target.value)
+        }
       />
       <Field
         label="Row"
         field="start-rows"
-        defaultValue={startPositionRowDefault}
-        ref={startRowRef}
+        value={startPositionRow}
+        onChange={(e) => changeFormState("startPositionRow", +e.target.value)}
       />
 
       <label>End Position:</label>
       <Field
         label="Column"
         field="end-columns"
-        defaultValue={endPositionColumnDefault}
-        ref={endColumnRef}
+        value={endPositionColumn}
+        onChange={(e) => changeFormState("endPositionColumn", +e.target.value)}
       />
       <Field
         label="Row"
         field="end-rows"
-        defaultValue={endPositionRowDefault}
-        ref={endRowRef}
+        value={endPositionRow}
+        onChange={(e) => changeFormState("endPositionRow", +e.target.value)}
       />
 
       <Field
         label="Blocking Objects Number"
         field="blocking-objects"
-        defaultValue={blockingObjectsDefault}
-        ref={noBlockingObjectsRef}
+        value={blockingObjectsNumber}
+        onChange={(e) =>
+          changeFormState("blockingObjectsNumber", +e.target.value)
+        }
       />
 
       {!startAgain && <button type="submit">Find Path</button>}
