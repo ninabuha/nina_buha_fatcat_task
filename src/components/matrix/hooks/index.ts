@@ -7,7 +7,11 @@ import {
   startPositionColumnDefault,
   startPositionRowDefault,
 } from "../form/MatrixForm";
-import { useHasPathDfs, isAlreadyAtPosition } from "../../../utils";
+import {
+  useHasPathDfs,
+  isAlreadyAtPosition,
+  calculatePerformance,
+} from "../../../utils";
 
 export const matrixDefault = [
   [0, 1, 2],
@@ -102,7 +106,7 @@ export const useMatrix = () => {
       ];
     }
     const endTime = performance.now();
-    console.warn(`It took ${endTime - startTime} milliseconds`);
+    calculatePerformance(startTime, endTime);
   }, [matrix, boMatrix, startPosition, endPosition]);
 
   const reset = () => {

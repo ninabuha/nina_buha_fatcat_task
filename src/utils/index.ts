@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
 
 export const isCellAtPosition = (
   position: number[],
@@ -83,7 +83,7 @@ export const useHasPathDfs = (
       visited[i][j] = true;
       setMoMatrix((prevState: number[][]) => [...prevState, [i, j]]);
 
-      if (visited[endColumn][endRow]) {
+      if (visited[endColumn]?.[endRow]) {
         return true;
       }
 
@@ -99,8 +99,14 @@ export const useHasPathDfs = (
       console.log("Can not move");
       return false;
     }
-    return visited[endColumn][endRow];
+    return visited[endColumn]?.[endRow];
   }, [boMatrix, endColumn, endRow, matrix, setMoMatrix, startColumn, startRow]);
 
   return hasPathDfs;
+};
+
+export const calculatePerformance = (startTime: number, endTime: number) => {
+  const result = endTime - startTime;
+  console.warn(`It took ${result} milliseconds`);
+  return endTime - startTime;
 };

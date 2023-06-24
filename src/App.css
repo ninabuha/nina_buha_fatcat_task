@@ -63,3 +63,17 @@ th {
   left: 50%;
   transform: translate(-50%, -50%);
 }
+
+.tests-button {
+  margin-top: 2rem;
+  cursor: pointer;
+  color: white;
+  background-color: red;
+  padding: 0.5rem 1rem;
+}
+
+.results-table {
+  margin-top: 1rem;
+  text-align: center;
+  width: 100%;
+}

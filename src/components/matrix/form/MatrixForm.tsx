@@ -1,4 +1,4 @@
-import { FC, FormEvent, useRef, useState } from "react";
+import { FC, FormEvent, useState } from "react";
 import Field from "./Field";
 
 interface MatrixFormProps {
